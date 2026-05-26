@@ -8,6 +8,7 @@ import { getComments, addComment, deleteComment, editComment } from '@/services/
 import type { Report, Comment } from '@/lib/types';
 import { UPLOADS_BASE_URL } from '@/lib/api';
 import StatusBadge from '@/components/StatusBadge';
+import { ConfirmModal } from '@/components/ConfirmModal';
 import {
   ArrowLeft, Calendar, User, Tag, Trash2, Edit2,
   Send, MessageSquare, ChevronDown, MapPin
@@ -31,6 +32,10 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
+
+  const [deleteReportModalOpen, setDeleteReportModalOpen] = useState(false);
+  const [deleteCommentModalOpen, setDeleteCommentModalOpen] = useState(false);
+  const [commentToDelete, setCommentToDelete] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -64,8 +69,10 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
     setShowStatusDropdown(false);
   };
 
-  const handleDelete = async () => {
-    if (!confirm('Yakin ingin menghapus laporan ini?')) return;
+  const triggerDeleteReport = () => setDeleteReportModalOpen(true);
+
+  const confirmDeleteReport = async () => {
+    setDeleteReportModalOpen(false);
     try {
       const res = await deleteReport(id);
       if (res.success) {
@@ -98,8 +105,15 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
     }
   };
 
-  const handleDeleteComment = async (commentId: number) => {
-    if (!confirm('Hapus komentar ini?')) return;
+  const triggerDeleteComment = (commentId: number) => {
+    setCommentToDelete(commentId);
+    setDeleteCommentModalOpen(true);
+  };
+
+  const confirmDeleteComment = async () => {
+    if (commentToDelete === null) return;
+    const commentId = commentToDelete;
+    setDeleteCommentModalOpen(false);
     try {
       const res = await deleteComment(commentId);
       if (res.success) {
@@ -109,6 +123,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
     } catch {
       toast.error('Gagal menghapus komentar');
     }
+    setCommentToDelete(null);
   };
 
   const handleEditComment = async (commentId: number) => {
@@ -212,7 +227,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                 </div>
               )}
               {canDelete && (
-                <button onClick={handleDelete} style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', padding: '0.375rem 0.75rem', borderRadius: '0.5rem', border: '1px solid rgba(239,68,68,0.2)', background: 'rgba(239,68,68,0.06)', fontSize: '0.75rem', fontWeight: 600, color: '#ef4444', cursor: 'pointer' }} id="delete-report-btn">
+                <button onClick={triggerDeleteReport} style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', padding: '0.375rem 0.75rem', borderRadius: '0.5rem', border: '1px solid rgba(239,68,68,0.2)', background: 'rgba(239,68,68,0.06)', fontSize: '0.75rem', fontWeight: 600, color: '#ef4444', cursor: 'pointer' }} id="delete-report-btn">
                   <Trash2 className="h-3 w-3" /> Hapus
                 </button>
               )}
@@ -341,7 +356,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                   </div>
                   <div className="ds-comment-actions">
                     {(isOwner || isAdmin) && (
-                      <button onClick={() => handleDeleteComment(comment.id)} className="ds-comment-action-btn" style={{ color: 'var(--muted)' }}
+                      <button onClick={() => triggerDeleteComment(comment.id)} className="ds-comment-action-btn" style={{ color: 'var(--muted)' }}
                         onMouseEnter={(e) => { e.currentTarget.style.color = '#ef4444'; }}
                         onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--muted)'; }}
                       >
@@ -363,6 +378,27 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
           )}
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={deleteReportModalOpen}
+        title="Konfirmasi Hapus Laporan"
+        description="Apakah Anda yakin ingin menghapus laporan ini? Tindakan ini tidak dapat dibatalkan."
+        confirmText="Hapus"
+        cancelText="Batal"
+        onConfirm={confirmDeleteReport}
+        onCancel={() => setDeleteReportModalOpen(false)}
+        isDestructive={true}
+      />
+      <ConfirmModal
+        isOpen={deleteCommentModalOpen}
+        title="Konfirmasi Hapus Komentar"
+        description="Apakah Anda yakin ingin menghapus komentar ini?"
+        confirmText="Hapus"
+        cancelText="Batal"
+        onConfirm={confirmDeleteComment}
+        onCancel={() => { setDeleteCommentModalOpen(false); setCommentToDelete(null); }}
+        isDestructive={true}
+      />
     </div>
   );
 }

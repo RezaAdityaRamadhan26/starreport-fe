@@ -5,10 +5,13 @@ import { getUsers, changeUserRole, deleteUser } from '@/services/userService';
 import type { User } from '@/lib/types';
 import { Users, Trash2, Shield, ShieldCheck, UserIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { ConfirmModal } from '@/components/ConfirmModal';
 
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<{ id: number; username: string } | null>(null);
 
   useEffect(() => {
     getUsers().then((res) => {
@@ -26,8 +29,15 @@ export default function UsersPage() {
     } catch { toast.error('Gagal mengubah role'); }
   };
 
-  const handleDelete = async (id: number, username: string) => {
-    if (!confirm(`Yakin hapus pengguna "${username}"?`)) return;
+  const triggerDelete = (id: number, username: string) => {
+    setUserToDelete({ id, username });
+    setDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!userToDelete) return;
+    const { id } = userToDelete;
+    setDeleteModalOpen(false);
     try {
       const res = await deleteUser(id);
       if (res.success) {
@@ -35,6 +45,7 @@ export default function UsersPage() {
         setUsers((prev) => prev.filter((u) => u.id !== id));
       }
     } catch { toast.error('Gagal menghapus'); }
+    setUserToDelete(null);
   };
 
   const getRoleIcon = (role: string) => {
@@ -118,7 +129,7 @@ export default function UsersPage() {
                 <td>{getRoleBadge(u.role)}</td>
                 <td><RoleToggle user={u} /></td>
                 <td style={{ textAlign: 'right' }}>
-                  <button onClick={() => handleDelete(u.id, u.username)}
+                  <button onClick={() => triggerDelete(u.id, u.username)}
                     style={{ padding: '0.5rem', borderRadius: '0.5rem', border: 'none', background: 'none', cursor: 'pointer', color: 'var(--muted)', transition: 'all 0.2s ease' }}
                     onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(239,68,68,0.08)'; e.currentTarget.style.color = '#ef4444'; }}
                     onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = 'var(--muted)'; }}
@@ -131,6 +142,17 @@ export default function UsersPage() {
           </tbody>
         </table>
       </div>
+
+      <ConfirmModal
+        isOpen={deleteModalOpen}
+        title="Konfirmasi Hapus Pengguna"
+        description={`Apakah Anda yakin ingin menghapus pengguna "${userToDelete?.username}"? Tindakan ini tidak dapat dibatalkan.`}
+        confirmText="Hapus"
+        cancelText="Batal"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => { setDeleteModalOpen(false); setUserToDelete(null); }}
+        isDestructive={true}
+      />
     </div>
   );
 }
