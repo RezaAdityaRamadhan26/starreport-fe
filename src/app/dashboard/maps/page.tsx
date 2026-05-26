@@ -31,24 +31,24 @@ export default function MapExplorerPage() {
   }, []);
 
   return (
-    <div className="animate-fade-in space-y-6">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {/* Header */}
-      <div>
-        <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight text-foreground">
-          <MapIcon className="h-6 w-6 text-emerald-500" />
+      <div className="ds-page-header">
+        <h1 className="ds-page-title ds-page-title-icon">
+          <MapIcon className="h-6 w-6" style={{ color: '#10b981' }} />
           Peta Persebaran Laporan
         </h1>
-        <p className="mt-1 text-sm text-muted">
+        <p className="ds-page-subtitle">
           Lihat lokasi berbagai laporan masyarakat yang masuk.
         </p>
       </div>
 
       {/* Map Card */}
-      <div className="card-base overflow-hidden rounded-2xl p-2">
+      <div className="ds-card" style={{ overflow: 'hidden', padding: '0.5rem' }}>
         {loading ? (
-          <div className="flex h-[600px] flex-col items-center justify-center gap-3 bg-background">
-            <Loader2 className="h-6 w-6 animate-spin text-emerald-500" />
-            <p className="text-sm font-medium text-muted">Memuat peta...</p>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', height: '600px', background: 'var(--background)', borderRadius: '0.75rem' }}>
+            <Loader2 className="h-6 w-6 animate-spin" style={{ color: '#10b981' }} />
+            <p style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--muted)' }}>Memuat peta...</p>
           </div>
         ) : (
           <MapComponent
@@ -61,7 +61,7 @@ export default function MapExplorerPage() {
             }))}
             height="600px"
             zoom={13}
-            center={[-6.3956, 106.8166]} // Default center
+            center={[-6.3956, 106.8166]}
           />
         )}
       </div>

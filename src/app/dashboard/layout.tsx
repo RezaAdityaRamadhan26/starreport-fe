@@ -12,19 +12,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <ProtectedRoute>
       {isAdmin ? (
-        <div className="flex min-h-screen bg-background">
+        <div className="ds-layout">
           <Sidebar />
-          <div className="ml-56 flex flex-1 flex-col transition-all duration-200">
-            <main className="flex-1 px-8 py-6">
-              <div className="mx-auto max-w-5xl">{children}</div>
+          <div className="ds-main">
+            <main className="ds-content">
+              <div className="ds-content-inner">{children}</div>
             </main>
           </div>
         </div>
       ) : (
-        <div className="min-h-screen bg-background">
+        <div className="ds-layout-user">
           <Navbar />
-          <main className="px-6 py-6">
-            <div className="mx-auto max-w-5xl">{children}</div>
+          <main className="ds-content-user">
+            <div className="ds-content-inner">{children}</div>
           </main>
         </div>
       )}

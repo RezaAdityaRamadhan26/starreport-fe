@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { changePassword, updateProfilePicture } from '@/services/authService';
 import { useAuthStore } from '@/stores/authStore';
 import { UPLOADS_BASE_URL } from '@/lib/api';
-import { Settings, Eye, EyeOff, Lock, User, Upload, X } from 'lucide-react';
+import { Settings, Eye, EyeOff, Lock, User, Upload } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function SettingsPage() {
@@ -54,22 +54,23 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="animate-fade-in mx-auto max-w-lg space-y-6">
-      <div>
-        <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight text-foreground">
-          <Settings className="h-5 w-5 text-emerald-500" /> Pengaturan
+    <div style={{ maxWidth: '32rem', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      <div className="ds-page-header">
+        <h1 className="ds-page-title ds-page-title-icon">
+          <Settings className="h-5 w-5" style={{ color: '#10b981' }} /> Pengaturan
         </h1>
-        <p className="mt-1 text-sm text-muted">Kelola akun dan keamanan Anda.</p>
+        <p className="ds-page-subtitle">Kelola akun dan keamanan Anda.</p>
       </div>
 
-      <div className="card-base rounded-2xl p-6">
-        <div className="mb-5 flex items-center gap-2 text-[13px] font-semibold text-foreground">
-          <User className="h-4 w-4 text-emerald-500" />
+      {/* Profile Picture */}
+      <div className="ds-card" style={{ padding: '1.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem', fontSize: '0.8125rem', fontWeight: 700, color: 'var(--foreground)' }}>
+          <User className="h-4 w-4" style={{ color: '#10b981' }} />
           Foto Profil
         </div>
 
-        <div className="flex items-center gap-6">
-          <div className="flex h-20 w-20 shrink-0 overflow-hidden items-center justify-center rounded-full bg-input-bg text-[24px] font-bold text-muted shadow-sm">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+          <div className="ds-avatar ds-avatar-lg">
             {user?.profile_picture ? (
               <img src={`${UPLOADS_BASE_URL}/${user?.profile_picture}`} className="h-full w-full object-cover" alt="avatar" />
             ) : (
@@ -77,13 +78,10 @@ export default function SettingsPage() {
             )}
           </div>
           
-          <div className="flex-1">
-            <label
-              htmlFor="profile-upload"
-              className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-[13px] font-medium text-muted shadow-sm transition-colors hover:bg-background hover:text-foreground"
-            >
+          <div style={{ flex: 1 }}>
+            <label htmlFor="profile-upload" className="ds-upload-btn">
               {isUploading ? (
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-400 border-t-transparent" />
+                <div className="ds-spinner-ring" style={{ width: '1rem', height: '1rem', borderWidth: '2px' }} />
               ) : (
                 <Upload className="h-4 w-4" />
               )}
@@ -94,6 +92,7 @@ export default function SettingsPage() {
               type="file"
               accept="image/*"
               className="hidden"
+              style={{ display: 'none' }}
               onChange={async (e) => {
                 const file = e.target.files?.[0];
                 if (!file) return;
@@ -115,48 +114,51 @@ export default function SettingsPage() {
                 }
               }}
             />
-            <p className="mt-2 text-[12px] text-muted">JPG, PNG, atau GIF. Maks 2MB. (Langsung tersimpan)</p>
+            <p style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: 'var(--muted)' }}>
+              JPG, PNG, atau GIF. Maks 2MB. (Langsung tersimpan)
+            </p>
           </div>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="card-base rounded-2xl p-6">
-        <div className="mb-5 flex items-center gap-2 text-[13px] font-semibold text-foreground">
-          <Lock className="h-4 w-4 text-emerald-500" />
+      {/* Change Password */}
+      <form onSubmit={handleSubmit} className="ds-card" style={{ padding: '1.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem', fontSize: '0.8125rem', fontWeight: 700, color: 'var(--foreground)' }}>
+          <Lock className="h-4 w-4" style={{ color: '#10b981' }} />
           Ubah Password
         </div>
 
-        <div className="space-y-4">
-          <div>
-            <label htmlFor="old-pw" className="mb-1.5 block text-[13px] font-medium text-muted">Password Lama</label>
-            <div className="relative">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div className="auth-field">
+            <label htmlFor="old-pw" className="auth-label">Password Lama</label>
+            <div className="auth-input-wrap">
               <input id="old-pw" type={showOld ? 'text' : 'password'} value={oldPassword}
-                onChange={(e) => setOldPassword(e.target.value)} placeholder="Masukkan password lama" className="input-base pr-10" />
-              <button type="button" onClick={() => setShowOld(!showOld)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted/80 hover:text-muted">
+                onChange={(e) => setOldPassword(e.target.value)} placeholder="Masukkan password lama" className="auth-input" />
+              <button type="button" onClick={() => setShowOld(!showOld)} className="auth-input-toggle">
                 {showOld ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
           </div>
 
-          <div>
-            <label htmlFor="new-pw" className="mb-1.5 block text-[13px] font-medium text-muted">Password Baru</label>
-            <div className="relative">
+          <div className="auth-field">
+            <label htmlFor="new-pw" className="auth-label">Password Baru</label>
+            <div className="auth-input-wrap">
               <input id="new-pw" type={showNew ? 'text' : 'password'} value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)} placeholder="Minimal 6 karakter" className="input-base pr-10" />
-              <button type="button" onClick={() => setShowNew(!showNew)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted/80 hover:text-muted">
+                onChange={(e) => setNewPassword(e.target.value)} placeholder="Minimal 6 karakter" className="auth-input" />
+              <button type="button" onClick={() => setShowNew(!showNew)} className="auth-input-toggle">
                 {showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
           </div>
 
-          <div>
-            <label htmlFor="confirm-pw" className="mb-1.5 block text-[13px] font-medium text-muted">Konfirmasi Password Baru</label>
+          <div className="auth-field">
+            <label htmlFor="confirm-pw" className="auth-label">Konfirmasi Password Baru</label>
             <input id="confirm-pw" type="password" value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Ulangi password baru" className="input-base" />
+              onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Ulangi password baru" className="auth-input" />
           </div>
 
-          <button type="submit" disabled={isLoading} id="change-pw-submit" className="btn-primary w-full rounded-lg py-2.5 text-[13px]">
-            {isLoading ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> : 'Ubah Password'}
+          <button type="submit" disabled={isLoading} id="change-pw-submit" className="auth-submit">
+            {isLoading ? <div className="auth-spinner" /> : 'Ubah Password'}
           </button>
         </div>
       </form>

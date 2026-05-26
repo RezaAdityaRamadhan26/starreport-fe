@@ -27,43 +27,38 @@ export default function MyReportsPage() {
 
   if (loading) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <div className="h-7 w-7 animate-spin rounded-full border-[3px] border-emerald-500 border-t-transparent" />
+      <div className="ds-spinner">
+        <div className="ds-spinner-ring" />
       </div>
     );
   }
 
   return (
-    <div className="animate-fade-in space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">Laporan Saya</h1>
-          <p className="mt-1 text-sm text-muted">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div className="ds-page-header" style={{ marginBottom: 0 }}>
+          <h1 className="ds-page-title">Laporan Saya</h1>
+          <p className="ds-page-subtitle">
             {reports.length} laporan yang pernah Anda buat.
           </p>
         </div>
-        <Link href="/dashboard/reports/create" className="btn-primary rounded-lg text-[13px]">
+        <Link href="/dashboard/reports/create" className="auth-submit" style={{ width: 'auto', padding: '0.5rem 1rem', fontSize: '0.8125rem', borderRadius: '0.625rem' }}>
           + Buat Laporan
         </Link>
       </div>
 
       {reports.length === 0 ? (
-        <div className="card-base flex flex-col items-center justify-center rounded-2xl py-20">
-          <FolderOpen className="mb-3 h-10 w-10 text-muted/50" />
-          <p className="text-sm font-medium text-muted">Anda belum membuat laporan.</p>
-          <Link
-            href="/dashboard/reports/create"
-            className="mt-3 text-[13px] font-medium text-emerald-600 hover:text-emerald-700"
-          >
+        <div className="ds-empty">
+          <FolderOpen className="h-10 w-10 ds-empty-icon" />
+          <p className="ds-empty-text">Anda belum membuat laporan.</p>
+          <Link href="/dashboard/reports/create" className="ds-empty-link">
             Buat laporan pertama →
           </Link>
         </div>
       ) : (
-        <div className="stagger grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
           {reports.map((report) => (
-            <div key={report.id} className="animate-fade-up">
-              <ReportCard report={report} />
-            </div>
+            <ReportCard key={report.id} report={report} />
           ))}
         </div>
       )}

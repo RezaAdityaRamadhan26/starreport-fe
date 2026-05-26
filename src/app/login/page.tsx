@@ -5,9 +5,10 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuthStore } from '@/stores/authStore';
 import { loginUser } from '@/services/authService';
-import { Star, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { Star, Eye, EyeOff, ArrowRight, Shield, Zap, ChevronRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { motion } from 'framer-motion';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -17,6 +18,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [focusedField, setFocusedField] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
@@ -50,64 +52,137 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4 relative overflow-hidden">
-      <div className="absolute top-4 right-4 sm:top-8 sm:right-8">
-        <ThemeToggle />
+    <div className="auth-page">
+      {/* Left: Visual panel */}
+      <div className="auth-visual-panel">
+        <div className="auth-visual-mesh" />
+        <div className="auth-blob auth-blob-1" />
+        <div className="auth-blob auth-blob-2" />
+
+        <div className="auth-visual-content">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <Link href="/" className="auth-brand">
+              <div className="auth-brand-icon">
+                <Star className="h-5 w-5 text-white" fill="currentColor" />
+              </div>
+              <span className="auth-brand-text">StarReport</span>
+            </Link>
+          </motion.div>
+
+          <motion.div
+            className="auth-visual-hero"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.35 }}
+          >
+            <h2 className="auth-visual-title">
+              Selamat Datang<br />
+              <span className="auth-visual-accent">Kembali.</span>
+            </h2>
+            <p className="auth-visual-desc">
+              Masuk untuk melanjutkan melaporkan dan memantau status laporan Anda.
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="auth-visual-features"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+          >
+            <div className="auth-visual-feature">
+              <div className="auth-vf-icon" style={{ background: 'rgba(59,130,246,0.1)', color: '#3b82f6' }}>
+                <Shield className="h-4 w-4" />
+              </div>
+              <span>Data aman & terenkripsi</span>
+            </div>
+            <div className="auth-visual-feature">
+              <div className="auth-vf-icon" style={{ background: 'rgba(245,158,11,0.1)', color: '#f59e0b' }}>
+                <Zap className="h-4 w-4" />
+              </div>
+              <span>Proses login cepat</span>
+            </div>
+          </motion.div>
+        </div>
       </div>
 
-      <div className="w-full max-w-sm animate-fade-up">
-        {/* Logo */}
-        <div className="mb-8 flex flex-col items-center">
-          <div className="mb-5 flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500">
-            <Star className="h-5 w-5 text-white" fill="currentColor" />
-          </div>
-          <h1 className="text-xl font-semibold tracking-tight text-foreground">
-            Masuk ke StarReport
-          </h1>
-          <p className="mt-1.5 text-[13px] text-muted">
-            Masukkan kredensial Anda untuk melanjutkan
-          </p>
+      {/* Right: Form panel */}
+      <div className="auth-form-panel">
+        <div className="auth-form-topbar">
+          <ThemeToggle />
         </div>
 
-        {/* Card */}
-        <form onSubmit={handleSubmit} className="card-base rounded-2xl p-6">
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="username" className="mb-1.5 block text-[13px] font-medium text-muted">
-                Username
-              </label>
-              <input
-                id="username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Masukkan username"
-                className="input-base"
-                autoComplete="username"
-              />
-            </div>
+        <motion.div
+          className="auth-form-container"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {/* Mobile logo */}
+          <div className="auth-mobile-brand">
+            <Link href="/" className="auth-brand">
+              <div className="auth-brand-icon">
+                <Star className="h-4 w-4 text-white" fill="currentColor" />
+              </div>
+              <span className="auth-brand-text">StarReport</span>
+            </Link>
+          </div>
 
-            <div>
-              <label htmlFor="password" className="mb-1.5 block text-[13px] font-medium text-muted">
-                Password
-              </label>
-              <div className="relative">
+          <div className="auth-form-header">
+            <h1 className="auth-form-title">Masuk</h1>
+            <p className="auth-form-subtitle">
+              Masukkan kredensial Anda untuk melanjutkan
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="auth-form">
+            <div className="auth-field-group">
+              <div className={`auth-field ${focusedField === 'username' ? 'auth-field-focused' : ''}`}>
+                <label htmlFor="username" className="auth-label">
+                  Username
+                </label>
                 <input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Masukkan password"
-                  className="input-base pr-10"
-                  autoComplete="current-password"
+                  id="username"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  onFocus={() => setFocusedField('username')}
+                  onBlur={() => setFocusedField(null)}
+                  placeholder="Masukkan username"
+                  className="auth-input"
+                  autoComplete="username"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted/80 hover:text-muted"
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
+              </div>
+
+              <div className={`auth-field ${focusedField === 'password' ? 'auth-field-focused' : ''}`}>
+                <label htmlFor="password" className="auth-label">
+                  Password
+                </label>
+                <div className="auth-input-wrap">
+                  <input
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    onFocus={() => setFocusedField('password')}
+                    onBlur={() => setFocusedField(null)}
+                    placeholder="Masukkan password"
+                    className="auth-input"
+                    autoComplete="current-password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="auth-input-toggle"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -115,26 +190,29 @@ export default function LoginPage() {
               type="submit"
               disabled={isLoading}
               id="login-submit"
-              className="btn-primary w-full rounded-lg py-2.5"
+              className="auth-submit"
             >
               {isLoading ? (
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                <div className="auth-spinner" />
               ) : (
                 <>
-                  Masuk
+                  <span>Masuk</span>
                   <ArrowRight className="h-4 w-4" />
                 </>
               )}
             </button>
-          </div>
-        </form>
+          </form>
 
-        <p className="mt-6 text-center text-[13px] text-muted">
-          Belum punya akun?{' '}
-          <Link href="/register" className="font-medium text-emerald-600 hover:text-emerald-700">
-            Daftar sekarang
-          </Link>
-        </p>
+          <div className="auth-footer">
+            <p>
+              Belum punya akun?{' '}
+              <Link href="/register" className="auth-link">
+                Daftar sekarang
+                <ChevronRight className="h-3.5 w-3.5" />
+              </Link>
+            </p>
+          </div>
+        </motion.div>
       </div>
     </div>
   );

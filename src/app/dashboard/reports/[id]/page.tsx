@@ -127,17 +127,17 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
 
   if (loading) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <div className="h-7 w-7 animate-spin rounded-full border-[3px] border-emerald-500 border-t-transparent" />
+      <div className="ds-spinner">
+        <div className="ds-spinner-ring" />
       </div>
     );
   }
 
   if (!report) {
     return (
-      <div className="flex h-64 flex-col items-center justify-center gap-3">
-        <p className="text-sm text-muted">Laporan tidak ditemukan.</p>
-        <button onClick={() => router.back()} className="text-[13px] font-medium text-emerald-600 hover:text-emerald-700">
+      <div className="ds-empty" style={{ height: '16rem' }}>
+        <p className="ds-empty-text">Laporan tidak ditemukan.</p>
+        <button onClick={() => router.back()} className="ds-empty-link">
           ← Kembali
         </button>
       </div>
@@ -151,29 +151,29 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
   const canDelete = (user?.role === 'user' && report.user_id === user.id && report.status === 'pending') || isAdmin;
 
   return (
-    <div className="animate-fade-in mx-auto max-w-3xl space-y-6">
+    <div style={{ maxWidth: '48rem', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {/* Back */}
-      <button onClick={() => router.back()} className="flex items-center gap-1.5 text-[13px] font-medium text-muted transition-colors hover:text-foreground">
+      <button onClick={() => router.back()} className="ds-back-btn">
         <ArrowLeft className="h-3.5 w-3.5" /> Kembali
       </button>
 
       {/* Report Card */}
-      <article className="card-base overflow-hidden rounded-2xl">
+      <article className="ds-card" style={{ overflow: 'hidden' }}>
         {/* Image */}
         {report.image && (
-          <div className="h-64 overflow-hidden bg-input-bg">
-            <img src={`${UPLOADS_BASE_URL}/${report.image}`} alt={report.header} className="h-full w-full object-cover" />
+          <div style={{ height: '16rem', overflow: 'hidden', background: 'var(--input-bg)' }}>
+            <img src={`${UPLOADS_BASE_URL}/${report.image}`} alt={report.header} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           </div>
         )}
 
-        <div className="p-8">
+        <div style={{ padding: '2rem' }}>
           {/* Meta + Actions */}
-          <div className="mb-5 flex flex-wrap items-start justify-between gap-4">
-            <div className="space-y-3">
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', marginBottom: '1.25rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               <StatusBadge status={report.status} />
-              <h1 className="text-xl font-semibold tracking-tight text-foreground">{report.header}</h1>
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-muted/80">
-                <span className="inline-flex items-center gap-1">
+              <h1 style={{ fontSize: '1.25rem', fontWeight: 700, letterSpacing: '-0.02em', color: 'var(--foreground)' }}>{report.header}</h1>
+              <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '1rem', fontSize: '0.75rem', color: 'var(--muted)' }}>
+                <span className="ds-report-card-meta-item">
                   {report.author_avatar ? (
                     <img src={`${UPLOADS_BASE_URL}/${report.author_avatar}`} className="h-4 w-4 rounded-full object-cover" alt={report.author_name} />
                   ) : (
@@ -181,25 +181,29 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                   )}
                   {report.author_name}
                 </span>
-                <span className="inline-flex items-center gap-1"><Calendar className="h-3 w-3" />{formattedDate}</span>
-                <span className="inline-flex items-center gap-1"><Tag className="h-3 w-3" />{report.category_name}</span>
+                <span className="ds-report-card-meta-item"><Calendar className="h-3 w-3" />{formattedDate}</span>
+                <span className="ds-report-card-meta-item"><Tag className="h-3 w-3" />{report.category_name}</span>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               {isAdmin && (
-                <div className="relative">
+                <div style={{ position: 'relative' }}>
                   <button
                     onClick={() => setShowStatusDropdown(!showStatusDropdown)}
-                    className="btn-ghost gap-1.5 rounded-lg px-3 py-1.5 text-[12px]"
+                    className="ds-pagination-btn"
+                    style={{ fontSize: '0.75rem' }}
                     id="change-status-btn"
                   >
                     Ubah Status <ChevronDown className="h-3 w-3" />
                   </button>
                   {showStatusDropdown && (
-                    <div className="animate-slide-down absolute right-0 top-full z-50 mt-1.5 w-36 overflow-hidden rounded-xl border border-border bg-card shadow-lg">
+                    <div style={{ position: 'absolute', right: 0, top: '100%', marginTop: '0.375rem', width: '9rem', overflow: 'hidden', borderRadius: '0.75rem', border: '1px solid var(--border)', background: 'var(--card)', boxShadow: '0 8px 24px rgba(0,0,0,0.1)', zIndex: 50 }}>
                       {['pending', 'approved', 'rejected'].map((s) => (
-                        <button key={s} onClick={() => handleStatusChange(s)} className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-[13px] text-muted transition-colors hover:bg-background">
+                        <button key={s} onClick={() => handleStatusChange(s)} style={{ display: 'flex', width: '100%', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 0.75rem', border: 'none', background: 'none', cursor: 'pointer', textAlign: 'left', transition: 'background 0.15s ease' }}
+                          onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--input-bg)'; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; }}
+                        >
                           <StatusBadge status={s} />
                         </button>
                       ))}
@@ -208,7 +212,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                 </div>
               )}
               {canDelete && (
-                <button onClick={handleDelete} className="flex items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-[12px] font-medium text-red-600 transition-colors hover:bg-red-100" id="delete-report-btn">
+                <button onClick={handleDelete} style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', padding: '0.375rem 0.75rem', borderRadius: '0.5rem', border: '1px solid rgba(239,68,68,0.2)', background: 'rgba(239,68,68,0.06)', fontSize: '0.75rem', fontWeight: 600, color: '#ef4444', cursor: 'pointer' }} id="delete-report-btn">
                   <Trash2 className="h-3 w-3" /> Hapus
                 </button>
               )}
@@ -216,15 +220,15 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
           </div>
 
           {/* Body */}
-          <p className="whitespace-pre-wrap text-sm leading-relaxed text-muted">{report.body}</p>
+          <p style={{ whiteSpace: 'pre-wrap', fontSize: '0.875rem', lineHeight: 1.7, color: 'var(--muted)' }}>{report.body}</p>
 
           {/* Map */}
           {report.latitude && report.longitude && (
-            <div className="mt-8 space-y-3">
-              <h3 className="flex items-center gap-1.5 text-sm font-medium text-foreground">
-                <MapPin className="h-4 w-4 text-emerald-500" /> Lokasi Kejadian
+            <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <h3 className="ds-report-card-meta-item" style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--foreground)', gap: '0.375rem' }}>
+                <MapPin className="h-4 w-4" style={{ color: '#10b981' }} /> Lokasi Kejadian
               </h3>
-              <div className="rounded-xl border border-border bg-background p-1">
+              <div style={{ borderRadius: '0.75rem', border: '1px solid var(--border)', overflow: 'hidden', padding: '0.25rem', background: 'var(--background)' }}>
                 <MapComponent
                   markers={[{
                     id: report.id,
@@ -242,39 +246,41 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
         </div>
       </article>
 
-      {/* Comments — Chat-bubble style */}
-      <div className="card-base rounded-2xl p-8">
-        <h2 className="mb-6 flex items-center gap-2 text-[15px] font-semibold text-foreground">
-          <MessageSquare className="h-4 w-4 text-emerald-500" />
+      {/* Comments */}
+      <div className="ds-card" style={{ padding: '2rem' }}>
+        <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9375rem', fontWeight: 700, color: 'var(--foreground)', marginBottom: '1.5rem' }}>
+          <MessageSquare className="h-4 w-4" style={{ color: '#10b981' }} />
           Komentar ({comments.length})
         </h2>
 
         {/* Comment input */}
-        <form onSubmit={handleAddComment} className="mb-6 flex gap-3">
-          <div className="flex h-8 w-8 shrink-0 overflow-hidden items-center justify-center rounded-full bg-emerald-50 text-[11px] font-bold text-emerald-600">
+        <form onSubmit={handleAddComment} style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.5rem' }}>
+          <div className="ds-avatar ds-avatar-md" style={{ background: 'rgba(16,185,129,0.08)', color: '#10b981' }}>
             {user?.profile_picture ? (
               <img src={`${UPLOADS_BASE_URL}/${user.profile_picture}`} className="h-full w-full object-cover" alt="avatar" />
             ) : (
               user?.username?.charAt(0).toUpperCase()
             )}
           </div>
-          <div className="flex flex-1 gap-2">
+          <div style={{ display: 'flex', flex: 1, gap: '0.5rem' }}>
             <input
               type="text"
               value={commentBody}
               onChange={(e) => setCommentBody(e.target.value)}
               placeholder="Tulis komentar..."
-              className="input-base flex-1"
+              className="auth-input"
+              style={{ flex: 1 }}
               id="comment-input"
             />
             <button
               type="submit"
               disabled={submitting || !commentBody.trim()}
-              className="btn-primary rounded-lg px-3 py-2 disabled:opacity-40"
+              className="auth-submit"
+              style={{ width: 'auto', padding: '0.5rem 0.875rem', borderRadius: '0.625rem', opacity: (!commentBody.trim() || submitting) ? 0.4 : 1 }}
               id="submit-comment"
             >
               {submitting ? (
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                <div className="auth-spinner" style={{ width: '1rem', height: '1rem' }} />
               ) : (
                 <Send className="h-4 w-4" />
               )}
@@ -283,9 +289,9 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
         </form>
 
         {/* Thread */}
-        <div className="space-y-3">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           {comments.length === 0 ? (
-            <p className="py-8 text-center text-[13px] text-muted/80">Belum ada komentar. Jadilah yang pertama!</p>
+            <p style={{ padding: '2rem 0', textAlign: 'center', fontSize: '0.8125rem', color: 'var(--muted)' }}>Belum ada komentar. Jadilah yang pertama!</p>
           ) : (
             comments.map((comment) => {
               const isOwner = user?.id === comment.user_id;
@@ -294,55 +300,59 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                 day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
               });
               return (
-                <div key={comment.id} className={`flex gap-3 ${isOwner ? 'flex-row-reverse' : ''}`}>
-                  <div className={`flex h-8 w-8 shrink-0 overflow-hidden items-center justify-center rounded-full text-[11px] font-bold ${
-                    isAdminComment ? 'bg-blue-50 text-blue-600' : 'bg-input-bg text-muted'
-                  }`}>
+                <div key={comment.id} className={`ds-comment ${isOwner ? 'ds-comment-own' : ''}`}>
+                  <div className="ds-avatar ds-avatar-md" style={{
+                    background: isAdminComment ? 'rgba(59,130,246,0.08)' : 'var(--input-bg)',
+                    color: isAdminComment ? '#3b82f6' : 'var(--muted)',
+                  }}>
                     {comment.author_avatar ? (
                       <img src={`${UPLOADS_BASE_URL}/${comment.author_avatar}`} className="h-full w-full object-cover" alt="avatar" />
                     ) : (
                       comment.author?.charAt(0).toUpperCase()
                     )}
                   </div>
-                  <div className={`max-w-[75%] rounded-2xl px-4 py-3 ${
-                    isOwner
-                      ? 'rounded-tr-md bg-emerald-50'
-                      : 'rounded-tl-md bg-background'
-                  }`}>
-                    <div className="mb-1 flex items-center gap-2">
-                      <span className="text-[12px] font-semibold text-muted">{comment.author}</span>
+                  <div className={`ds-comment-bubble ${isOwner ? 'ds-comment-bubble-own' : 'ds-comment-bubble-other'}`}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                      <span className="ds-comment-author">{comment.author}</span>
                       {isAdminComment && (
-                        <span className="rounded-full bg-blue-100 px-1.5 py-px text-[10px] font-semibold text-blue-600">
+                        <span className="ds-comment-admin-badge">
                           {comment.role === 'super_admin' ? 'Super Admin' : 'Admin'}
                         </span>
                       )}
-                      <span className="text-[11px] text-muted/80">{commentDate}</span>
+                      <span className="ds-comment-time">{commentDate}</span>
                     </div>
                     {editingCommentId === comment.id ? (
-                      <div className="mt-2 space-y-2">
+                      <div style={{ marginTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                         <textarea
                           value={editingCommentBody}
                           onChange={(e) => setEditingCommentBody(e.target.value)}
-                          className="input-base w-full text-[13px] min-h-[60px]"
+                          className="auth-input"
+                          style={{ fontSize: '0.8125rem', minHeight: '3.75rem', resize: 'none' }}
                           autoFocus
                         />
-                        <div className="flex gap-2 justify-end">
-                          <button onClick={() => setEditingCommentId(null)} className="text-[12px] font-medium text-muted hover:text-foreground">Batal</button>
-                          <button onClick={() => handleEditComment(comment.id)} className="btn-primary px-3 py-1 text-[12px] rounded-md">Simpan</button>
+                        <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                          <button onClick={() => setEditingCommentId(null)} className="ds-back-btn" style={{ fontSize: '0.75rem' }}>Batal</button>
+                          <button onClick={() => handleEditComment(comment.id)} className="auth-submit" style={{ width: 'auto', padding: '0.25rem 0.75rem', fontSize: '0.75rem', borderRadius: '0.375rem' }}>Simpan</button>
                         </div>
                       </div>
                     ) : (
-                      <p className="text-[13px] leading-relaxed text-muted">{comment.body}</p>
+                      <p className="ds-comment-body">{comment.body}</p>
                     )}
                   </div>
-                  <div className="flex flex-col gap-2 self-center">
+                  <div className="ds-comment-actions">
                     {(isOwner || isAdmin) && (
-                      <button onClick={() => handleDeleteComment(comment.id)} className="text-muted/50 transition-colors hover:text-red-400">
+                      <button onClick={() => handleDeleteComment(comment.id)} className="ds-comment-action-btn" style={{ color: 'var(--muted)' }}
+                        onMouseEnter={(e) => { e.currentTarget.style.color = '#ef4444'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--muted)'; }}
+                      >
                         <Trash2 className="h-3 w-3" />
                       </button>
                     )}
                     {isOwner && (
-                      <button onClick={() => { setEditingCommentId(comment.id); setEditingCommentBody(comment.body); }} className="text-muted/50 transition-colors hover:text-emerald-500">
+                      <button onClick={() => { setEditingCommentId(comment.id); setEditingCommentBody(comment.body); }} className="ds-comment-action-btn"
+                        onMouseEnter={(e) => { e.currentTarget.style.color = '#10b981'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--muted)'; }}
+                      >
                         <Edit2 className="h-3 w-3" />
                       </button>
                     )}

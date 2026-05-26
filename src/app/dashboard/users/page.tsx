@@ -38,20 +38,20 @@ export default function UsersPage() {
   };
 
   const getRoleIcon = (role: string) => {
-    if (role === 'super_admin') return <ShieldCheck className="h-3.5 w-3.5 text-purple-500" />;
-    if (role === 'admin') return <Shield className="h-3.5 w-3.5 text-blue-500" />;
-    return <UserIcon className="h-3.5 w-3.5 text-muted/80" />;
+    if (role === 'super_admin') return <ShieldCheck className="h-3.5 w-3.5" style={{ color: '#a855f7' }} />;
+    if (role === 'admin') return <Shield className="h-3.5 w-3.5" style={{ color: '#3b82f6' }} />;
+    return <UserIcon className="h-3.5 w-3.5" style={{ color: 'var(--muted)' }} />;
   };
 
   const getRoleBadge = (role: string) => {
-    const map: Record<string, { className: string; label: string }> = {
-      super_admin: { className: 'bg-purple-50 text-purple-700 border-purple-200', label: 'Super Admin' },
-      admin: { className: 'bg-blue-50 text-blue-700 border-blue-200', label: 'Admin' },
-      user: { className: 'bg-background text-muted border-border', label: 'Pengguna' },
+    const map: Record<string, { bg: string; color: string; border: string; label: string }> = {
+      super_admin: { bg: 'rgba(168,85,247,0.08)', color: '#a855f7', border: 'rgba(168,85,247,0.2)', label: 'Super Admin' },
+      admin: { bg: 'rgba(59,130,246,0.08)', color: '#3b82f6', border: 'rgba(59,130,246,0.2)', label: 'Admin' },
+      user: { bg: 'var(--input-bg)', color: 'var(--muted)', border: 'var(--border)', label: 'Pengguna' },
     };
-    const { className, label } = map[role] || map.user;
+    const { bg, color, border, label } = map[role] || map.user;
     return (
-      <span className={`pill border ${className}`}>
+      <span className="ds-badge" style={{ background: bg, color, borderColor: border }}>
         {getRoleIcon(role)} {label}
       </span>
     );
@@ -61,16 +61,12 @@ export default function UsersPage() {
     const roles = ['user', 'admin', 'super_admin'] as const;
     const labels = { user: 'User', admin: 'Admin', super_admin: 'SA' };
     return (
-      <div className="flex rounded-lg bg-input-bg p-0.5">
+      <div className="ds-role-toggle">
         {roles.map((r) => (
           <button
             key={r}
             onClick={() => { if (r !== u.role) handleRoleChange(u.id, r); }}
-            className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-all ${
-              u.role === r
-                ? 'bg-card text-foreground shadow-sm'
-                : 'text-muted/80 hover:text-muted'
-            }`}
+            className={`ds-role-btn ${u.role === r ? 'ds-role-btn-active' : ''}`}
           >
             {labels[r]}
           </button>
@@ -81,49 +77,52 @@ export default function UsersPage() {
 
   if (loading) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <div className="h-7 w-7 animate-spin rounded-full border-[3px] border-emerald-500 border-t-transparent" />
+      <div className="ds-spinner">
+        <div className="ds-spinner-ring" />
       </div>
     );
   }
 
   return (
-    <div className="animate-fade-in space-y-6">
-      <div>
-        <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight text-foreground">
-          <Users className="h-5 w-5 text-emerald-500" /> Kelola Pengguna
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      <div className="ds-page-header">
+        <h1 className="ds-page-title ds-page-title-icon">
+          <Users className="h-5 w-5" style={{ color: '#10b981' }} /> Kelola Pengguna
         </h1>
-        <p className="mt-1 text-sm text-muted">{users.length} pengguna terdaftar.</p>
+        <p className="ds-page-subtitle">{users.length} pengguna terdaftar.</p>
       </div>
 
-      <div className="card-base overflow-hidden rounded-2xl">
-        <table className="w-full">
+      <div className="ds-table-wrap">
+        <table className="ds-table">
           <thead>
-            <tr className="border-b border-border">
-              <th className="px-6 py-3.5 text-left text-[11px] font-semibold uppercase tracking-wider text-muted/80">ID</th>
-              <th className="px-6 py-3.5 text-left text-[11px] font-semibold uppercase tracking-wider text-muted/80">Username</th>
-              <th className="px-6 py-3.5 text-left text-[11px] font-semibold uppercase tracking-wider text-muted/80">Role</th>
-              <th className="px-6 py-3.5 text-left text-[11px] font-semibold uppercase tracking-wider text-muted/80">Ubah Role</th>
-              <th className="px-6 py-3.5 text-right text-[11px] font-semibold uppercase tracking-wider text-muted/80">Aksi</th>
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Role</th>
+              <th>Ubah Role</th>
+              <th style={{ textAlign: 'right' }}>Aksi</th>
             </tr>
           </thead>
           <tbody>
             {users.map((u) => (
-              <tr key={u.id} className="border-b border-slate-50 transition-colors hover:bg-background/50">
-                <td className="px-6 py-4 text-[13px] text-muted/80">#{u.id}</td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-2.5">
-                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-input-bg text-[11px] font-semibold text-muted">
+              <tr key={u.id}>
+                <td style={{ color: 'var(--muted)' }}>#{u.id}</td>
+                <td>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
+                    <div className="ds-avatar ds-avatar-sm">
                       {u.username.charAt(0).toUpperCase()}
                     </div>
-                    <span className="text-[13px] font-medium text-foreground">{u.username}</span>
+                    <span style={{ fontWeight: 600, color: 'var(--foreground)' }}>{u.username}</span>
                   </div>
                 </td>
-                <td className="px-6 py-4">{getRoleBadge(u.role)}</td>
-                <td className="px-6 py-4"><RoleToggle user={u} /></td>
-                <td className="px-6 py-4 text-right">
+                <td>{getRoleBadge(u.role)}</td>
+                <td><RoleToggle user={u} /></td>
+                <td style={{ textAlign: 'right' }}>
                   <button onClick={() => handleDelete(u.id, u.username)}
-                    className="rounded-lg p-2 text-muted/50 transition-colors hover:bg-red-50 hover:text-red-500">
+                    style={{ padding: '0.5rem', borderRadius: '0.5rem', border: 'none', background: 'none', cursor: 'pointer', color: 'var(--muted)', transition: 'all 0.2s ease' }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(239,68,68,0.08)'; e.currentTarget.style.color = '#ef4444'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = 'var(--muted)'; }}
+                  >
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </td>
