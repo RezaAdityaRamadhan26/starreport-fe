@@ -427,6 +427,7 @@ body {
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.6), rgba(59, 130, 246, 0.5));
 }
 
+
 .landing-hero-content {
   position: relative;
   z-index: 2;
@@ -2420,25 +2421,37 @@ body {
   border-color: rgba(245, 158, 11, 0.25);
 }
 
-.ds-badge-approved {
+.ds-badge-diproses {
+  background: rgba(59, 130, 246, 0.08);
+  color: #1d4ed8;
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.dark .ds-badge-diproses {
+  background: rgba(59, 130, 246, 0.12);
+  color: #60a5fa;
+  border-color: rgba(59, 130, 246, 0.25);
+}
+
+.ds-badge-selesai {
   background: rgba(16, 185, 129, 0.08);
   color: #047857;
   border-color: rgba(16, 185, 129, 0.2);
 }
 
-.dark .ds-badge-approved {
+.dark .ds-badge-selesai {
   background: rgba(16, 185, 129, 0.12);
   color: #34d399;
   border-color: rgba(16, 185, 129, 0.25);
 }
 
-.ds-badge-rejected {
+.ds-badge-ditolak {
   background: rgba(239, 68, 68, 0.08);
   color: #dc2626;
   border-color: rgba(239, 68, 68, 0.2);
 }
 
-.dark .ds-badge-rejected {
+.dark .ds-badge-ditolak {
   background: rgba(239, 68, 68, 0.12);
   color: #f87171;
   border-color: rgba(239, 68, 68, 0.25);

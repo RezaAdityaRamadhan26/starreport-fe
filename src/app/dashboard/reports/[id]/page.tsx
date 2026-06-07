@@ -214,7 +214,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                   </button>
                   {showStatusDropdown && (
                     <div style={{ position: 'absolute', right: 0, top: '100%', marginTop: '0.375rem', width: '9rem', overflow: 'hidden', borderRadius: '0.75rem', border: '1px solid var(--border)', background: 'var(--card)', boxShadow: '0 8px 24px rgba(0,0,0,0.1)', zIndex: 50 }}>
-                      {['pending', 'approved', 'rejected'].map((s) => (
+                      {['pending', 'diproses', 'selesai', 'ditolak'].map((s) => (
                         <button key={s} onClick={() => handleStatusChange(s)} style={{ display: 'flex', width: '100%', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 0.75rem', border: 'none', background: 'none', cursor: 'pointer', textAlign: 'left', transition: 'background 0.15s ease' }}
                           onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--input-bg)'; }}
                           onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; }}

@@ -1,5 +1,5 @@
 import api from '@/lib/api';
-import type { ApiResponse, LoginPayload, RegisterPayload, ChangePasswordPayload, User } from '@/lib/types';
+import type { ApiResponse, LoginPayload, RegisterPayload, ChangePasswordPayload, VerifyResetPayload, ResetPasswordPayload, User } from '@/lib/types';
 
 export const loginUser = async (payload: LoginPayload) => {
   const { data } = await api.post<ApiResponse & { token: string; user: User }>('/auth/login', payload);
@@ -13,6 +13,16 @@ export const registerUser = async (payload: RegisterPayload) => {
 
 export const changePassword = async (payload: ChangePasswordPayload) => {
   const { data } = await api.put<ApiResponse>('/auth/password', payload);
+  return data;
+};
+
+export const verifyReset = async (payload: VerifyResetPayload) => {
+  const { data } = await api.post<ApiResponse>('/auth/verify-reset', payload);
+  return data;
+};
+
+export const resetPassword = async (payload: ResetPasswordPayload) => {
+  const { data } = await api.post<ApiResponse>('/auth/reset-password', payload);
   return data;
 };
 

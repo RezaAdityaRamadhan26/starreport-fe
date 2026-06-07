@@ -35,8 +35,24 @@ export default function RootLayout({
           <AuthProvider>
             {children}
             <Toaster position="top-right" toastOptions={{ 
-              style: { borderRadius: '12px', background: 'var(--card)', color: 'var(--foreground)' }
-            }} />
+                duration: 5000,
+                style: {
+                  borderRadius: '12px',
+                  background: 'var(--card)',
+                  color: 'var(--foreground)',
+                  border: '1px solid var(--border)',
+                  fontSize: '0.875rem',
+                  fontWeight: 500,
+                  padding: '12px 16px',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                },
+                success: {
+                  iconTheme: { primary: '#10B981', secondary: 'var(--card)' },
+                },
+                error: {
+                  iconTheme: { primary: '#ef4444', secondary: 'var(--card)' },
+                },
+              }} />
           </AuthProvider>
         </ThemeProvider>
       </body>

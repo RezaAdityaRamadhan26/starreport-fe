@@ -52,15 +52,16 @@ export default function DashboardPage() {
 
   const statConfigs = isAdmin
     ? [
-        { label: 'Total Laporan', value: totalReports, icon: FileText, bg: 'rgba(107,114,128,0.08)', color: '#6b7280' },
         { label: 'Menunggu', value: getStatValue('pending'), icon: Clock, bg: 'rgba(245,158,11,0.08)', color: '#f59e0b' },
-        { label: 'Disetujui', value: getStatValue('approved'), icon: CheckCircle, bg: 'rgba(16,185,129,0.08)', color: '#10b981' },
-        { label: 'Ditolak', value: getStatValue('rejected'), icon: XCircle, bg: 'rgba(239,68,68,0.08)', color: '#ef4444' },
+        { label: 'Diproses', value: getStatValue('diproses'), icon: TrendingUp, bg: 'rgba(59,130,246,0.08)', color: '#3b82f6' },
+        { label: 'Selesai', value: getStatValue('selesai'), icon: CheckCircle, bg: 'rgba(16,185,129,0.08)', color: '#10b981' },
+        { label: 'Ditolak', value: getStatValue('ditolak'), icon: XCircle, bg: 'rgba(239,68,68,0.08)', color: '#ef4444' },
       ]
     : [
         { label: 'Total Laporan', value: myReports.length, icon: FileText, bg: 'rgba(107,114,128,0.08)', color: '#6b7280' },
-        { label: 'Sedang Diproses', value: myReports.filter((r) => r.status === 'pending').length, icon: TrendingUp, bg: 'rgba(245,158,11,0.08)', color: '#f59e0b' },
-        { label: 'Ditolak', value: myReports.filter((r) => r.status === 'rejected').length, icon: AlertTriangle, bg: 'rgba(239,68,68,0.08)', color: '#ef4444' },
+        { label: 'Menunggu', value: myReports.filter((r) => r.status === 'pending').length, icon: Clock, bg: 'rgba(245,158,11,0.08)', color: '#f59e0b' },
+        { label: 'Diproses', value: myReports.filter((r) => r.status === 'diproses').length, icon: TrendingUp, bg: 'rgba(59,130,246,0.08)', color: '#3b82f6' },
+        { label: 'Selesai', value: myReports.filter((r) => r.status === 'selesai').length, icon: CheckCircle, bg: 'rgba(16,185,129,0.08)', color: '#10b981' },
       ];
 
   return (
@@ -76,7 +77,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${isAdmin ? 4 : 3}, 1fr)`, gap: '1rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
         {statConfigs.map((stat, i) => (
           <div key={i} className="ds-stat-card">
             <div className="ds-stat-header">

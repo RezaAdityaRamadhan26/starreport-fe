@@ -30,15 +30,24 @@ export default function Sidebar() {
     router.replace('/login');
   };
 
-  const menuItems = [
-    { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { label: 'Semua Laporan', href: '/dashboard/reports', icon: FileText },
-    { label: 'Peta Laporan', href: '/dashboard/maps', icon: Map },
-    { label: 'Buat Laporan', href: '/dashboard/reports/create', icon: FilePlus },
-    { label: 'Laporan Saya', href: '/dashboard/my-reports', icon: FolderOpen },
-    ...(isSuperAdmin ? [{ label: 'Pengguna', href: '/dashboard/users', icon: Users }] : []),
-    { label: 'Pengaturan', href: '/dashboard/settings', icon: Settings },
-  ];
+  const menuItems = isSuperAdmin
+    ? [
+        { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+        { label: 'Pengguna', href: '/dashboard/users', icon: Users },
+        { label: 'Semua Laporan', href: '/dashboard/reports', icon: FileText },
+        { label: 'Peta Laporan', href: '/dashboard/maps', icon: Map },
+        { label: 'Buat Laporan', href: '/dashboard/reports/create', icon: FilePlus },
+        { label: 'Laporan Saya', href: '/dashboard/my-reports', icon: FolderOpen },
+        { label: 'Pengaturan', href: '/dashboard/settings', icon: Settings },
+      ]
+    : [
+        { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+        { label: 'Semua Laporan', href: '/dashboard/reports', icon: FileText },
+        { label: 'Peta Laporan', href: '/dashboard/maps', icon: Map },
+        { label: 'Buat Laporan', href: '/dashboard/reports/create', icon: FilePlus },
+        { label: 'Laporan Saya', href: '/dashboard/my-reports', icon: FolderOpen },
+        { label: 'Pengaturan', href: '/dashboard/settings', icon: Settings },
+      ];
 
   return (
     <aside className={`ds-sidebar ${collapsed ? 'ds-sidebar-collapsed' : ''}`}>

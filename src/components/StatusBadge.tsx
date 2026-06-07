@@ -11,14 +11,19 @@ export default function StatusBadge({ status }: StatusBadgeProps) {
       className: 'ds-badge ds-badge-pending',
       icon: <Clock className="h-3 w-3" />,
     },
-    approved: {
-      label: 'Disetujui',
-      className: 'ds-badge ds-badge-approved',
+    diproses: {
+      label: 'Diproses',
+      className: 'ds-badge ds-badge-diproses',
+      icon: <Clock className="h-3 w-3" />,
+    },
+    selesai: {
+      label: 'Selesai',
+      className: 'ds-badge ds-badge-selesai',
       icon: <CheckCircle className="h-3 w-3" />,
     },
-    rejected: {
+    ditolak: {
       label: 'Ditolak',
-      className: 'ds-badge ds-badge-rejected',
+      className: 'ds-badge ds-badge-ditolak',
       icon: <XCircle className="h-3 w-3" />,
     },
   };

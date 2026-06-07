@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { getUsers, changeUserRole, deleteUser } from '@/services/userService';
+import { registerUser } from '@/services/authService';
 import type { User } from '@/lib/types';
-import { Users, Trash2, Shield, ShieldCheck, UserIcon } from 'lucide-react';
+import { Users, Trash2, Shield, ShieldCheck, UserIcon, Plus, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { ConfirmModal } from '@/components/ConfirmModal';
 
@@ -12,6 +13,13 @@ export default function UsersPage() {
   const [loading, setLoading] = useState(true);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<{ id: number; username: string } | null>(null);
+  
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [newUsername, setNewUsername] = useState('');
+  const [newEmail, setNewEmail] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [newRole, setNewRole] = useState<'user' | 'admin' | 'super_admin'>('user');
+  const [isCreating, setIsCreating] = useState(false);
 
   useEffect(() => {
     getUsers().then((res) => {
@@ -48,6 +56,37 @@ export default function UsersPage() {
     setUserToDelete(null);
   };
 
+  const handleCreateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newUsername.trim() || !newEmail.trim() || !newPassword.trim()) {
+      toast.error('Semua kolom wajib diisi');
+      return;
+    }
+
+    setIsCreating(true);
+    try {
+      const res = await registerUser({ username: newUsername, email: newEmail, password: newPassword, role: newRole });
+      if (res.success) {
+        toast.success('Pengguna berhasil ditambahkan');
+        setCreateModalOpen(false);
+        setNewUsername('');
+        setNewEmail('');
+        setNewPassword('');
+        setNewRole('user');
+        
+        // Refresh users list
+        const latestUsers = await getUsers();
+        if (latestUsers.success && latestUsers.data) setUsers(latestUsers.data);
+      } else {
+        toast.error(res.message || 'Gagal menambahkan pengguna');
+      }
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Gagal menambahkan pengguna');
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
   const getRoleIcon = (role: string) => {
     if (role === 'super_admin') return <ShieldCheck className="h-3.5 w-3.5" style={{ color: '#a855f7' }} />;
     if (role === 'admin') return <Shield className="h-3.5 w-3.5" style={{ color: '#3b82f6' }} />;
@@ -70,14 +109,15 @@ export default function UsersPage() {
 
   const RoleToggle = ({ user: u }: { user: User }) => {
     const roles = ['user', 'admin', 'super_admin'] as const;
-    const labels = { user: 'User', admin: 'Admin', super_admin: 'SA' };
+    const labels = { user: 'User', admin: 'Admin', super_admin: 'Super Admin' };
     return (
-      <div className="ds-role-toggle">
+      <div className="ds-role-toggle" style={{ width: 'max-content' }}>
         {roles.map((r) => (
           <button
             key={r}
             onClick={() => { if (r !== u.role) handleRoleChange(u.id, r); }}
             className={`ds-role-btn ${u.role === r ? 'ds-role-btn-active' : ''}`}
+            style={{ whiteSpace: 'nowrap' }}
           >
             {labels[r]}
           </button>
@@ -96,11 +136,20 @@ export default function UsersPage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      <div className="ds-page-header">
-        <h1 className="ds-page-title ds-page-title-icon">
-          <Users className="h-5 w-5" style={{ color: '#10b981' }} /> Kelola Pengguna
-        </h1>
-        <p className="ds-page-subtitle">{users.length} pengguna terdaftar.</p>
+      <div className="ds-page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+        <div>
+          <h1 className="ds-page-title ds-page-title-icon">
+            <Users className="h-5 w-5" style={{ color: '#10b981' }} /> Kelola Pengguna
+          </h1>
+          <p className="ds-page-subtitle">{users.length} pengguna terdaftar.</p>
+        </div>
+        <button 
+          onClick={() => setCreateModalOpen(true)}
+          className="auth-submit" 
+          style={{ width: 'auto', padding: '0.6rem 1.25rem', borderRadius: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0 }}
+        >
+          <Plus className="h-4 w-4" /> Tambah Pengguna
+        </button>
       </div>
 
       <div className="ds-table-wrap">
@@ -153,6 +202,73 @@ export default function UsersPage() {
         onCancel={() => { setDeleteModalOpen(false); setUserToDelete(null); }}
         isDestructive={true}
       />
+
+      {/* Create User Modal */}
+      {createModalOpen && (
+        <div className="ds-modal-overlay" onClick={() => setCreateModalOpen(false)}>
+          <div className="ds-modal" onClick={(e) => e.stopPropagation()} style={{ padding: '2rem', maxWidth: '450px' }}>
+            <div className="ds-modal-header" style={{ marginBottom: '1.5rem', justifyContent: 'space-between', display: 'flex' }}>
+              <h3 className="ds-modal-title">Tambah Pengguna Baru</h3>
+              <button onClick={() => setCreateModalOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)' }}>
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <form onSubmit={handleCreateUser} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              <div className="auth-field">
+                <label className="auth-label">Username</label>
+                <input 
+                  type="text" 
+                  value={newUsername} 
+                  onChange={(e) => setNewUsername(e.target.value)} 
+                  className="auth-input" 
+                  placeholder="Masukkan username" 
+                />
+              </div>
+              <div className="auth-field">
+                <label className="auth-label">Email</label>
+                <input 
+                  type="email" 
+                  value={newEmail} 
+                  onChange={(e) => setNewEmail(e.target.value)} 
+                  className="auth-input" 
+                  placeholder="Masukkan email" 
+                />
+              </div>
+              <div className="auth-field">
+                <label className="auth-label">Password</label>
+                <input 
+                  type="password" 
+                  value={newPassword} 
+                  onChange={(e) => setNewPassword(e.target.value)} 
+                  className="auth-input" 
+                  placeholder="Minimal 6 karakter" 
+                />
+              </div>
+              <div className="auth-field">
+                <label className="auth-label">Role</label>
+                <select 
+                  value={newRole} 
+                  onChange={(e) => setNewRole(e.target.value as any)} 
+                  className="auth-input"
+                  style={{ appearance: 'auto' }}
+                >
+                  <option value="user">Pengguna Biasa (User)</option>
+                  <option value="admin">Admin</option>
+                  <option value="super_admin">Super Admin</option>
+                </select>
+              </div>
+              <div className="ds-modal-actions" style={{ marginTop: '1.5rem' }}>
+                <button type="button" onClick={() => setCreateModalOpen(false)} className="ds-modal-btn-cancel">
+                  Batal
+                </button>
+                <button type="submit" disabled={isCreating} className="ds-modal-btn-confirm ds-modal-btn-success">
+                  {isCreating ? 'Menambahkan...' : 'Simpan Pengguna'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

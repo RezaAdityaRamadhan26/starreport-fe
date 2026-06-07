@@ -20,12 +20,22 @@ export interface LoginPayload {
 
 export interface RegisterPayload {
   username: string;
+  email: string;
   password: string;
   role?: string;
 }
 
 export interface ChangePasswordPayload {
   oldPassword: string;
+  newPassword: string;
+}
+
+export interface VerifyResetPayload {
+  identifier: string;
+}
+
+export interface ResetPasswordPayload {
+  identifier: string;
   newPassword: string;
 }
 
@@ -38,7 +48,7 @@ export interface Report {
   author_avatar?: string;
   category_name: string;
   image: string | null;
-  status: 'pending' | 'approved' | 'rejected';
+  status: 'ditolak' | 'pending' | 'diproses' | 'selesai';
   created_at: string;
   total_comments?: number;
   latitude?: number;

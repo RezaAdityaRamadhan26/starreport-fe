@@ -39,6 +39,10 @@ export default function CreateReportPage() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Ukuran gambar maksimal 5MB!');
+        return;
+      }
       setImage(file);
       const reader = new FileReader();
       reader.onload = () => setImagePreview(reader.result as string);
@@ -50,6 +54,10 @@ export default function CreateReportPage() {
     e.preventDefault();
     const file = e.dataTransfer.files?.[0];
     if (file && file.type.startsWith('image/')) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Ukuran gambar maksimal 5MB!');
+        return;
+      }
       setImage(file);
       const reader = new FileReader();
       reader.onload = () => setImagePreview(reader.result as string);
@@ -175,7 +183,7 @@ export default function CreateReportPage() {
                   <Upload className="h-5 w-5" />
                 </div>
                 <p style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--muted)' }}>Drag & drop atau klik untuk upload</p>
-                <p style={{ marginTop: '0.25rem', fontSize: '0.75rem', color: 'var(--muted)' }}>JPG, PNG, atau GIF (maks 5MB)</p>
+                <p style={{ marginTop: '0.25rem', fontSize: '0.75rem', color: 'var(--muted)' }}>JPG, PNG, GIF, WEBP, dll (maks 5MB)</p>
                 <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} id="report-image" />
               </label>
             )}

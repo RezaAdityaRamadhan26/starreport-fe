@@ -38,7 +38,7 @@ export default function LoginPage() {
       const data = await loginUser({ username, password });
       if (data.success && data.token && data.user) {
         setAuth(data.user, data.token);
-        toast.success('Login berhasil!');
+        toast.success('Login berhasil!', { duration: 8000 });
         router.push('/dashboard');
       } else {
         toast.error(data.message || 'Login gagal');
@@ -184,6 +184,12 @@ export default function LoginPage() {
                   </button>
                 </div>
               </div>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1.5rem', marginTop: '-0.5rem' }}>
+              <Link href="/forgot-password" style={{ fontSize: '0.8125rem', color: 'var(--accent)', fontWeight: 500, textDecoration: 'none' }}>
+                Lupa Password?
+              </Link>
             </div>
 
             <button

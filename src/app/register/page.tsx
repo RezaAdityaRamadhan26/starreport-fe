@@ -15,6 +15,7 @@ export default function RegisterPage() {
   const { isAuthenticated, isLoading: authLoading } = useAuthStore();
 
   const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -36,8 +37,8 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!username.trim() || !password.trim()) {
-      toast.error('Username dan password harus diisi');
+    if (!username.trim() || !email.trim() || !password.trim()) {
+      toast.error('Username, email, dan password harus diisi');
       return;
     }
     if (password !== confirmPassword) {
@@ -51,7 +52,7 @@ export default function RegisterPage() {
 
     setIsLoading(true);
     try {
-      const data = await registerUser({ username, password });
+      const data = await registerUser({ username, email, password });
       if (data.success) {
         toast.success('Registrasi berhasil! Silakan login.');
         router.push('/login');
@@ -170,6 +171,23 @@ export default function RegisterPage() {
                   placeholder="Pilih username"
                   className="auth-input"
                   autoComplete="username"
+                />
+              </div>
+
+              <div className={`auth-field ${focusedField === 'email' ? 'auth-field-focused' : ''}`}>
+                <label htmlFor="reg-email" className="auth-label">
+                  Email
+                </label>
+                <input
+                  id="reg-email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onFocus={() => setFocusedField('email')}
+                  onBlur={() => setFocusedField(null)}
+                  placeholder="Masukkan email Anda"
+                  className="auth-input"
+                  autoComplete="email"
                 />
               </div>
 

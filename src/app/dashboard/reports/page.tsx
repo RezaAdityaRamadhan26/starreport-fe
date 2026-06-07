@@ -70,8 +70,9 @@ export default function ReportsPage() {
         >
           <option value="">Semua Status</option>
           <option value="pending">Menunggu</option>
-          <option value="approved">Disetujui</option>
-          <option value="rejected">Ditolak</option>
+          <option value="diproses">Diproses</option>
+          <option value="selesai">Selesai</option>
+          <option value="ditolak">Ditolak</option>
         </select>
 
         <select
